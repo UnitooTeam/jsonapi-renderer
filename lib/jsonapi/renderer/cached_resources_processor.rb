@@ -5,9 +5,6 @@ module JSONAPI
     # @private
     class CachedResourcesProcessor < ResourcesProcessor
       class JSONString < String
-        def to_json(*)
-          self
-        end
       end
 
       def initialize(cache)
@@ -19,9 +16,7 @@ module JSONAPI
           cache_hash = cache_key_map(resources)
           processed_resources = @cache.fetch_multi(*cache_hash.keys) do |key|
             res, include, fields = cache_hash[key]
-            json = res.as_jsonapi(include: include, fields: fields).to_json
-
-            JSONString.new(json)
+            res.as_jsonapi(include: include, fields: fields)
           end
 
           resources.replace(processed_resources.values)
